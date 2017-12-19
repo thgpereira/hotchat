@@ -1,66 +1,79 @@
 package br.com.thiago.hotchat.service.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import br.com.thiago.hotchat.builder.UserBuilder;
 import br.com.thiago.hotchat.entity.User;
+import br.com.thiago.hotchat.repository.UserRepository;
 import br.com.thiago.hotchat.service.UserService;
 import br.com.thiago.hotchat.service.exception.HotChatException;
 import br.com.thiago.hotchat.util.Messages;
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
-@Ignore
+@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
 public class UserServiceTest {
 
 	@Autowired
 	private UserService userService;
 
 	@Autowired
-	private TestEntityManager entityManager;
-
-	@Autowired
 	private BCryptPasswordEncoder bcrypt;
 
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-
-	private static final String NAME = "Usuario Teste Unitário";
-	private static final String EMAIL = "unitteste@email.com.br";
-	private static final String PASSWORD = "123456";
+	@MockBean
+	private UserRepository userRepository;
 
 	@Test
 	public void saveNewUserSucess() throws HotChatException {
-		User user = userService.save(createUser());
-		assertEquals(user.getName(), NAME);
-		assertEquals(user.getEmail(), EMAIL);
-		assertEquals(user.getPassword(), bcrypt.encode(PASSWORD));
-		assertEquals(user.isOnline(), false);
+		User userMock = new UserBuilder().build();
+		mockRepositoryFindByEmail(null, "unitteste@email.com.br");
+		mockRepositorySave(userMock);
+
+		ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+		User user = userService.save(userMock);
+		assertNotNull(user);
+
+		verify(userRepository).saveAndFlush(userCaptor.capture());
+
+		User userBeforeSave = userCaptor.getValue();
+		assertEquals(userBeforeSave.getName(), "Usuario Teste Unitário");
+		assertEquals(userBeforeSave.getEmail(), "unitteste@email.com.br");
+		assertTrue(bcrypt.matches("123456", userBeforeSave.getPassword()));
+		assertEquals(userBeforeSave.isOnline(), false);
 	}
 
 	@Test
-	public void saveNewUserErrorEmailRegistered() throws HotChatException {
-		entityManager.persist(createUser());
-		userService.save(createUser());
-		expectedException.expect(HotChatException.class);
-		expectedException.expectMessage(Messages.emailRegistered());
+	public void saveNewUserErrorEmailRegistered() {
+		try {
+			User userMock = new UserBuilder().build();
+			mockRepositoryFindByEmail(userMock, "unitteste@email.com.br");
+			userService.save(userMock);
+			fail("Teste deve falhar");
+		} catch (HotChatException e) {
+			assertEquals(e.getMessage(), Messages.emailRegistered());
+		}
 	}
 
-	private User createUser() {
-		User user = new User();
-		user.setName(NAME);
-		user.setEmail(EMAIL);
-		user.setPassword(PASSWORD);
-		return user;
+	public void mockRepositoryFindByEmail(User userMock, String email) {
+		when(userRepository.findByEmail(email)).thenReturn(userMock);
+	}
+
+	public void mockRepositorySave(User userMock) {
+		User userMockSave = new UserBuilder().withId(1L).build();
+		when(userRepository.saveAndFlush(userMock)).thenReturn(userMockSave);
 	}
 }
