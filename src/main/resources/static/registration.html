@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>HotChat - O seu chat</title>
+		<link href="/css/hotchat.css" rel="stylesheet">
+		<link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<script src="/webjars/jquery/jquery.min.js"></script>
+		<script src="/js/hotchat.js"></script>
+ 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<form class="form-register" id="formRegistration">		
+				<h2 class="form-signin-heading center">HotChat - Cadastro de usuário</h2>
+				<div class="hidden" id="divAlert" role="alert"></div>
+									
+				<div class="form-group">
+					<label class="control-label" for="inputName">Nome</label> 
+					<input class="form-control" id="inputName" name="inputName" placeholder="Digite seu nome" type="text" autofocus />
+				</div>
+
+				<div class="form-group">
+					<label for="inputEmail" class="control-label">Email</label> 
+					<input type="email" class="form-control" id="inputEmail" name="inputEmail" placeholder="Digite seu e-mail" />
+				</div>
+
+				<div class="form-group">
+		        	<label for="inputPassword" class="control-label">Senha</label>
+              		<input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Digite sua senha" />
+		        </div>
+		        
+	        	<div class="form-group">
+		        	<label for="inputPasswordConfirm" class="control-label">Confirme a senha</label>
+	            	<input type="password" class="form-control" id="inputPasswordConfirm" name="inputPasswordConfirm" placeholder="Confirme a sua senha"/>
+	            </div>
+
+				<div class="form-group">
+					<button class="btn btn-primary" id="btnCreate" type="submit">Cadastrar</button>
+					<input class="btn btn-secondary" type="button" onclick="location.href='/';" value="Cancelar" />
+				</div>
+			</form>
+		</div>
+	</body>
+</html>

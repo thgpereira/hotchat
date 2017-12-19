@@ -41,13 +41,23 @@ body {
 	border-top-right-radius: 0;
 }
 
+.error-block {
+	display: block;
+	margin-top: 2px;
+	margin-bottom: 10px;
+	color: #FF0000;
+}
+
+.form-register {
+	max-width: 700px;
+	padding: 15px;
+	margin: 0 auto;
+}
+
 .center {
 	text-align: center;
 }
 
-.error-block {
-	display: block;
-    margin-top: 2px;
-    margin-bottom: 10px;
-    color: #FF0000;
+.hidden {
+	display: none;
 }
