@@ -9,13 +9,16 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import br.com.thiago.hotchat.builder.UserBuilder;
 import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.repository.UserRepository;
 
-@RunWith(SpringRunner.class)
+@SpringBootTest
 @DataJpaTest
+@RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class UserRepositoryTest {
 
@@ -31,20 +34,13 @@ public class UserRepositoryTest {
 
 	@Test
 	public void findUserByEmail() {
-		entityManager.persist(createUser());
+		User userMock = new UserBuilder().build();
+		entityManager.persist(userMock);
 		User user = repository.findByEmail(EMAIL);
 		assertEquals(user.getName(), NAME);
 		assertEquals(user.getEmail(), EMAIL);
 		assertEquals(user.getPassword(), PASSWORD);
 		assertEquals(user.isOnline(), false);
-	}
-
-	private User createUser() {
-		User user = new User();
-		user.setName(NAME);
-		user.setEmail(EMAIL);
-		user.setPassword(PASSWORD);
-		return user;
 	}
 
 }
