@@ -6,22 +6,23 @@
 		<title>HotChat - O seu chat</title>
 		<link href="/css/hotchat.css" rel="stylesheet">
 		<link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-		<script src="/webjars/jquery/jquery.min.js"></script>
 		<script src="/js/hotchat.js"></script>
+		<script src="/webjars/jquery/jquery.min.js"></script>
  		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
 	</head>
 
-	<body>
+	<body onload="loadLoginPage()">
 		<div class="container">
-			<form class="form-signin" id="formLogin">
+			<form class="form-signin" id="formLogin" action="/login" method="post" enctype="application/x-www-form-urlencoded">
 				<h2 class="form-signin-heading center">HotChat - Login</h2>
+				<div class="hidden alert alert-danger" id="divAlert" role="alert"></div>
 									
 				<div class="form-group">
-					<input type="email" class="form-control" id="inputEmail" name="inputEmail" placeholder="Informe seu e-mail" autofocus />
+					<input type="email" class="form-control" id="inputEmail" name="inputEmail" placeholder="Informe seu e-mail" required autofocus />
 				</div>
 
 				<div class="form-group">
-              		<input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Informe sua senha" />
+              		<input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="Informe sua senha" required />
 		        </div>
 	
 				<button class="btn btn-primary btn-lg btn-primary btn-block" id="btnLogin" type="submit">Entrar</button>

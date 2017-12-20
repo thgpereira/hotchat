@@ -30,14 +30,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		// http.httpBasic().disable();
-		// http.csrf().disable();
 		http.authorizeRequests().antMatchers("/").permitAll().antMatchers("/login").permitAll()
 				.antMatchers("/registration").permitAll().antMatchers("/chat/**").hasAuthority(RoleEnum.USER.toString())
 				.anyRequest().authenticated().and().csrf().disable().formLogin().loginPage("/login")
-				.failureUrl("/login?error=true").defaultSuccessUrl("/chat/index.html").usernameParameter("email")
-				.passwordParameter("password").and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-				.logoutSuccessUrl("/").and().exceptionHandling().accessDeniedPage("/403.html");
+				.failureUrl("/login?error=true").defaultSuccessUrl("/chat/index.html").usernameParameter("inputEmail")
+				.passwordParameter("inputPassword").and().logout()
+				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/");
 	}
 
 	@Override
