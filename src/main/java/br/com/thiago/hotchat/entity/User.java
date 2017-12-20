@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class User implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@ApiModelProperty(hidden = true)
 	private Long id;
 
 	@NotEmpty(message = "Campo nome é obrigatório.")
@@ -38,6 +40,7 @@ public class User implements Serializable {
 	@NotEmpty(message = "Campo senha é obrigatório.")
 	private String password;
 
+	@ApiModelProperty(hidden = true)
 	private boolean online;
 
 }
