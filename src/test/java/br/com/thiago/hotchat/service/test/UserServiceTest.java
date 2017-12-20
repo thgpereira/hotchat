@@ -13,6 +13,9 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -29,6 +32,9 @@ public class UserServiceTest {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	@Autowired
 	private BCryptPasswordEncoder bcrypt;
@@ -66,6 +72,20 @@ public class UserServiceTest {
 		} catch (HotChatException e) {
 			assertEquals(e.getMessage(), Messages.emailRegistered());
 		}
+	}
+
+	@Test
+	public void loadUserByUsernameSucess() {
+		User userMock = new UserBuilder().build();
+		mockRepositoryFindByEmail(userMock, "unitteste@email.com.br");
+		UserDetails userDetails = userDetailsService.loadUserByUsername("unitteste@email.com.br");
+		assertNotNull(userDetails);
+	}
+
+	@Test(expected = UsernameNotFoundException.class)
+	public void loadUserByUsernameError() {
+		mockRepositoryFindByEmail(null, "unitteste@email.com.br");
+		userDetailsService.loadUserByUsername("unitteste@email.com.br");
 	}
 
 	public void mockRepositoryFindByEmail(User userMock, String email) {
