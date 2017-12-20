@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.thiago.hotchat.builder.UserBuilder;
 import br.com.thiago.hotchat.entity.User;
@@ -24,7 +24,7 @@ import br.com.thiago.hotchat.service.exception.HotChatException;
 import br.com.thiago.hotchat.util.Messages;
 
 @SpringBootTest
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 public class UserServiceTest {
 
 	@Autowired
