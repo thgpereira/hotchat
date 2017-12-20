@@ -39,6 +39,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
+	public void updateUserOnline(String email, boolean online) {
+		userRepository.updateUserOnline(email, online);
+	}
+
+	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepository.findByEmail(email);
 		if (user == null) {

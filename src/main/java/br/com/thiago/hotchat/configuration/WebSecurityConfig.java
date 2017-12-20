@@ -11,17 +11,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import br.com.thiago.hotchat.enumerator.RoleEnum;
-
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@Autowired
-	private UserDetailsService userDetailsService;
+	private SimpleAuthenticationSuccessHandler loginSuccessHandler;
+
+	@Autowired
+	private SimpleLogoutSuccessHandler logoutSuccessHandler;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -30,11 +34,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/", "/login", "/registration").permitAll().antMatchers("/chat/**")
-				.hasAuthority(RoleEnum.USER.toString()).anyRequest().authenticated().and().csrf().disable().formLogin()
-				.loginPage("/login").failureUrl("/login?error=true").defaultSuccessUrl("/chat/index.html")
-				.usernameParameter("inputEmail").passwordParameter("inputPassword").and().logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/");
+		http.authorizeRequests().antMatchers("/", "/login", "/registration").permitAll().anyRequest().authenticated()
+				.and().csrf().disable().formLogin().loginPage("/login").failureUrl("/login?error=true")
+				.successHandler(loginSuccessHandler).usernameParameter("inputEmail").passwordParameter("inputPassword")
+				.and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				.logoutSuccessHandler(logoutSuccessHandler);
 	}
 
 	@Override

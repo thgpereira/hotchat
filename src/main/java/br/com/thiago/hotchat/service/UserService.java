@@ -7,4 +7,6 @@ public interface UserService {
 
 	User save(User newUser) throws HotChatException;
 
+	void updateUserOnline(String email, boolean online);
+
 }
