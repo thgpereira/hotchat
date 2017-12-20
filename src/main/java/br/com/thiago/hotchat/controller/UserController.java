@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.thiago.hotchat.entity.User;
+import br.com.thiago.hotchat.exception.HotChatException;
 import br.com.thiago.hotchat.service.UserService;
-import br.com.thiago.hotchat.service.exception.HotChatException;
 
 @RestController
 @RequestMapping(value = "/user")

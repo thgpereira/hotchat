@@ -18,9 +18,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.thiago.hotchat.builder.UserBuilder;
 import br.com.thiago.hotchat.entity.User;
+import br.com.thiago.hotchat.exception.HotChatException;
 import br.com.thiago.hotchat.repository.UserRepository;
 import br.com.thiago.hotchat.service.UserService;
-import br.com.thiago.hotchat.service.exception.HotChatException;
 import br.com.thiago.hotchat.util.Messages;
 
 @SpringBootTest

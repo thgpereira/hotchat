@@ -1,4 +1,4 @@
-package br.com.thiago.hotchat.service.exception;
+package br.com.thiago.hotchat.exception;
 
 public class HotChatException extends Exception {
 

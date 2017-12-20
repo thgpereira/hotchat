@@ -1,7 +1,7 @@
 package br.com.thiago.hotchat.service;
 
 import br.com.thiago.hotchat.entity.User;
-import br.com.thiago.hotchat.service.exception.HotChatException;
+import br.com.thiago.hotchat.exception.HotChatException;
 
 public interface UserService {
 

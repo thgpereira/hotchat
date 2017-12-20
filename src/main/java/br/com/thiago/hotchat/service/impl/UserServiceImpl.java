@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.enumerator.RoleEnum;
+import br.com.thiago.hotchat.exception.HotChatException;
 import br.com.thiago.hotchat.repository.UserRepository;
 import br.com.thiago.hotchat.service.UserService;
-import br.com.thiago.hotchat.service.exception.HotChatException;
 import br.com.thiago.hotchat.util.Messages;
 
 @Service

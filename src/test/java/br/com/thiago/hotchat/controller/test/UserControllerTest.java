@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import br.com.thiago.hotchat.builder.UserBuilder;
 import br.com.thiago.hotchat.controller.UserController;
 import br.com.thiago.hotchat.entity.User;
+import br.com.thiago.hotchat.exception.HotChatException;
 import br.com.thiago.hotchat.service.UserService;
-import br.com.thiago.hotchat.service.exception.HotChatException;
 import br.com.thiago.hotchat.util.Messages;
 
 @RunWith(SpringRunner.class)
