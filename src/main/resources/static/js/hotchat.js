@@ -84,5 +84,49 @@ function requestLogin() {
 }
 
 function requestCreateUser() {
-	alert('CreateUser');
+	$.post("/user/create", {
+		name : $("#inputName").val(),
+		email : $("#inputEmail").val(),
+		password : $("#inputPassword").val()
+	}).done(function(data) {
+		$("#divAlert").removeClass("alert-danger hidden");
+		$("#divAlert").addClass("alert alert-success");
+		$("#btnCreate").addClass("hidden");
+		$("#btnCancelar").addClass("hidden");
+		$(".form-control").prop("readonly", true);
+		$(".form-control").addClass("readonly");
+		$("#divAlert").html(showMessageSucessCreateUser());
+		timeLogin();
+	}).fail(function(data) {
+		$("#divAlert").removeClass("hidden");
+		$("#divAlert").addClass("alert alert-danger");
+		$("#divAlert").html(data.responseText);
+	});
+}
+
+function showMessageSucessCreateUser() {
+	var html = "Seu cadastro foi realizado com sucesso! ;)<br/><br/>";
+	html += "Você será redirecionado para a tela de login em ";
+	html += "<span id='timeLogin'>5</span> segundos."
+	return html;
+}
+
+function timeLogin() {
+	var interval, time = 5;
+	function timer() {
+		$("#timeLogin").html(time);
+		if (time === 0) {
+			clearInterval(interval);
+			redirectLogin();
+		} else {
+			time--;
+		}
+	}
+	interval = setInterval(timer, 1000);
+}
+
+function redirectLogin() {
+	$(document).ready(function() {
+		$(location).attr("href", "/");
+	});
 }
