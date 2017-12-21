@@ -45,7 +45,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public List<User> findAllUsersExcludeEmail(String emailExclude) {
-		return userRepository.findByEmailNot(emailExclude);
+		return userRepository.findByEmailNotOrderByOnlineDescNameAsc(emailExclude);
+	}
+
+	@Override
+	public User findByEmail(String email) {
+		return userRepository.findByEmail(email);
 	}
 
 	@Override

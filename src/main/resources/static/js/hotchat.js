@@ -103,19 +103,52 @@ function loadLoginPage() {
 }
 
 function onLoadChat() {
+	loadUserLogged();
 	checkUsers();
 }
 
+function loadUserLogged() {
+	$.post('/chat/user/load')
+	.done(function(data) {
+		$('#userNameLogged').html(data.name);
+		$('#userEmailLogged').val(data.email);
+	}).fail(function(data) {
+		alert('Erro ao carregar o chat.');
+	});
+}
+
 function checkUsers() {
+	loadUsersChat();
 	function loadUsersChat() {
-		$.post('/chat/users/listall', {
-			email: $('#inputEmail').val(),
-			password: $('#inputPassword').val()
-		}).done(function(data) {
-			alert('S: ' + data);
+		$.post('/chat/users/listall')
+		.done(function(data) {
+			updateUsersContactList(data);
 		}).fail(function(data) {
-			alert('E: ' + data);
+			alert('Erro ao carregar o chat.');
 		});
 	}
 	setInterval(loadUsersChat, 5000);
+}
+
+function updateUsersContactList(data) {
+	var html = '';
+	data.forEach(user => {
+		html += createHtmlUserContactList(user);
+     });
+	$('#chat-contacts-body').html(html);
+}
+
+function createHtmlUserContactList(user) {
+	var cssStatus = user.online ? 'chat-contact-status-online' : 'chat-contact-status-offline';
+	var html = '<div class="chat-contacts-body-name">';
+	html += '<div class="chat-contact-status ' + cssStatus + '"></div>';
+	html += '<div class="chat-contact-name" >';
+	html += '<a href="#" onclick="selectUserChat(' + user.name + ', ' + user.email + ')">' + user.name + '</a>';
+	html += '</div></div>';
+	return html;
+}
+
+function selectUserChat(name, email) {
+	$('#userNameChat').html(name);
+	$('#userEmailChat').val(email);
 }

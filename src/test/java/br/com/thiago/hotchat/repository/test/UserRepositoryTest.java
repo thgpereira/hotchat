@@ -57,7 +57,7 @@ public class UserRepositoryTest {
 		entityManager.persist(userMock1);
 		entityManager.persist(userMock2);
 		entityManager.persist(userMock3);
-		List<User> users = repository.findByEmailNot("unitteste1@email.com.br");
+		List<User> users = repository.findByEmailNotOrderByOnlineDescNameAsc("unitteste1@email.com.br");
 		List<String> emails = users.stream().map(u -> u.getEmail()).collect(Collectors.toList());
 		assertThat(emails, not(hasItem("unitteste1@email.com.br")));
 	}

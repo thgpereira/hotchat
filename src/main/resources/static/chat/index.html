@@ -12,25 +12,31 @@
 	</head>
 	
 	<body onload="onLoadChat()">
-<!-- 	httpServletRequest.remoteUser -->
 		<a href="/logout">Sair</a>
+		<h2 class="form-signin-heading center">HotChat - Bem vindo <span id="userNameLogged"></span></h2>
+		<input type="text" name="userEmailLogged" id="userEmailLogged" class="hidden" />
 		<div class="container chat-full">
 			<div class="chat-contacts">
 				<div class="chat-contacts-title">Contatos</div>
-				<div class="chat-contacts-body">
-					<div class="chat-contacts-body-name">
-						<div class="chat-contact-status chat-contact-status-online"></div>
-						<div class="chat-contact-name">Contato 1</div>
-					</div>
-					<div class="chat-contacts-body-name">
-						<div class="chat-contact-status chat-contact-status-offline"></div>
-						<div class="chat-contact-name">Contato 1</div>
-					</div>
+				<div class="chat-contacts-body" id="chat-contacts-body">
+<!-- 					<div class="chat-contacts-body-name"> -->
+<!-- 						<div class="chat-contact-status chat-contact-status-online"></div> -->
+<!-- 						<div class="chat-contact-name" > -->
+<!-- 							<a href="#" onclick="selectUserChat('Contato 1', '1@1.com')">Contato 1</a> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 					<div class="chat-contacts-body-name"> -->
+<!-- 						<div class="chat-contact-status chat-contact-status-offline"></div> -->
+<!-- 						<div class="chat-contact-name"> -->
+<!-- 							<a href="#" onclick="selectUserChat('Contato 2', '2@2.com')">Contato 2</a> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
 				</div>
 			</div>
 			<div class="chat-messages">
 				<div class="contact-message">
-					<div class="contact-message-name">Contato 1</div>
+					<div class="contact-message-name" id="userNameChat">Selecione um usuário na lista</div>
+					<input type="text" name="userChatEmail" id="userEmailChat" class="hidden" />
 					<div class="contact-message-actions">---</div>
 				</div>
 				<div class="messages">

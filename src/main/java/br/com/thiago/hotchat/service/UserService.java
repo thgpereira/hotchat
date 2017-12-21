@@ -13,4 +13,6 @@ public interface UserService {
 
 	List<User> findAllUsersExcludeEmail(String emailExclude);
 
+	User findByEmail(String email);
+
 }
