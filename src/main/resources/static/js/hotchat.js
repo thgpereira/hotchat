@@ -101,3 +101,21 @@ function loadLoginPage() {
 		$('#divAlert').html('Login e/ou senha inválidos.');
 	}
 }
+
+function onLoadChat() {
+	checkUsers();
+}
+
+function checkUsers() {
+	function loadUsersChat() {
+		$.post('/chat/users/listall', {
+			email: $('#inputEmail').val(),
+			password: $('#inputPassword').val()
+		}).done(function(data) {
+			alert('S: ' + data);
+		}).fail(function(data) {
+			alert('E: ' + data);
+		});
+	}
+	setInterval(loadUsersChat, 5000);
+}

@@ -19,4 +19,9 @@ public class UserBuilder {
 		return this;
 	}
 
+	public UserBuilder withEmail(String email) {
+		this.email = email;
+		return this;
+	}
+
 }

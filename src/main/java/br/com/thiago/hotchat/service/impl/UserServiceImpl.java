@@ -44,6 +44,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
+	public List<User> findAllUsersExcludeEmail(String emailExclude) {
+		return userRepository.findByEmailNot(emailExclude);
+	}
+
+	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepository.findByEmail(email);
 		if (user == null) {

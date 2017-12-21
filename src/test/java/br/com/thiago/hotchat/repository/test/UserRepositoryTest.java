@@ -1,6 +1,12 @@
 package br.com.thiago.hotchat.repository.test;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +47,19 @@ public class UserRepositoryTest {
 		assertEquals(user.getEmail(), EMAIL);
 		assertEquals(user.getPassword(), PASSWORD);
 		assertEquals(user.isOnline(), false);
+	}
+
+	@Test
+	public void findUsersExcludeEmail() {
+		User userMock1 = new UserBuilder().build();
+		User userMock2 = new UserBuilder().withEmail("unitteste1@email.com.br").build();
+		User userMock3 = new UserBuilder().withEmail("unitteste2@email.com.br").build();
+		entityManager.persist(userMock1);
+		entityManager.persist(userMock2);
+		entityManager.persist(userMock3);
+		List<User> users = repository.findByEmailNot("unitteste1@email.com.br");
+		List<String> emails = users.stream().map(u -> u.getEmail()).collect(Collectors.toList());
+		assertThat(emails, not(hasItem("unitteste1@email.com.br")));
 	}
 
 	@Test
