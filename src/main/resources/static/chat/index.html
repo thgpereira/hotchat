@@ -12,27 +12,27 @@
 	</head>
 	
 	<body onload="onLoadChat()">
-		<a href="/logout">Sair</a>
 		<h2 class="form-signin-heading center">HotChat - Bem vindo <span id="userNameLogged"></span></h2>
 		<input type="text" name="userEmailLogged" id="userEmailLogged" class="hidden" />
+		
+		<div class="chat-bar-actions">
+			<div class="chat-bar-actions-left">
+<!-- 			https://www.w3schools.com/bootstrap/bootstrap_ref_comp_glyphs.asp -->
+				<span class="glyphicon glyphicon-user"></span>
+			</div>
+			<div class="chat-bar-actions-right">
+				<a href="/logout" title="Sair">
+					<span class="glyphicon glyphicon-log-out"></span>
+				</a>
+			</div>
+		</div>
+		
 		<div class="container chat-full">
 			<div class="chat-contacts">
 				<div class="chat-contacts-title">Contatos</div>
-				<div class="chat-contacts-body" id="chat-contacts-body">
-<!-- 					<div class="chat-contacts-body-name"> -->
-<!-- 						<div class="chat-contact-status chat-contact-status-online"></div> -->
-<!-- 						<div class="chat-contact-name" > -->
-<!-- 							<a href="#" onclick="selectUserChat('Contato 1', '1@1.com')">Contato 1</a> -->
-<!-- 						</div> -->
-<!-- 					</div> -->
-<!-- 					<div class="chat-contacts-body-name"> -->
-<!-- 						<div class="chat-contact-status chat-contact-status-offline"></div> -->
-<!-- 						<div class="chat-contact-name"> -->
-<!-- 							<a href="#" onclick="selectUserChat('Contato 2', '2@2.com')">Contato 2</a> -->
-<!-- 						</div> -->
-<!-- 					</div> -->
-				</div>
+				<div class="chat-contacts-body" id="chat-contacts-body"></div>
 			</div>
+			
 			<div class="chat-messages">
 				<div class="contact-message">
 					<div class="contact-message-name" id="userNameChat">Selecione um usuário na lista</div>
@@ -52,6 +52,7 @@
 				</div>
 			</div>
 		</div>
+		
 		<div class="chat-send-message">
 			<div class="chat-send-message-text">
 				<input type="text" id="inputMessage" name="inputMessage" class="form-control" placeholder="Digite aqui sua mensagem" />
