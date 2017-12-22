@@ -1,11 +1,16 @@
 package br.com.thiago.hotchat.service.test;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.thiago.hotchat.builder.UserBuilder;
+import br.com.thiago.hotchat.dto.UserDTO;
 import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.exception.HotChatException;
 import br.com.thiago.hotchat.repository.UserRepository;
@@ -72,6 +78,17 @@ public class UserServiceTest {
 		} catch (HotChatException e) {
 			assertEquals(e.getMessage(), Messages.emailRegistered());
 		}
+	}
+
+	@Test
+	public void findAllUsersConvertDTOSuccess() {
+		User userMock1 = new UserBuilder().build();
+		User userMock2 = new UserBuilder().withEmail("unitteste1@email.com.br").build();
+		User userMock3 = new UserBuilder().withEmail("unitteste2@email.com.br").build();
+		List<User> users = Arrays.asList(userMock1, userMock2, userMock3);
+		when(userRepository.findAllByOrderByOnlineDescNameAsc()).thenReturn(users);
+		List<UserDTO> usersDTO = userService.findAllUsersConvertDTO();
+		assertThat(usersDTO, hasSize(3));
 	}
 
 	@Test

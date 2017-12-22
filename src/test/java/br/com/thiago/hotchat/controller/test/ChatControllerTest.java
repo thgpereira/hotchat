@@ -1,39 +1,68 @@
 package br.com.thiago.hotchat.controller.test;
 
-import static org.mockito.Mockito.when;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import br.com.thiago.hotchat.builder.MessageBuilder;
-import br.com.thiago.hotchat.builder.UserBuilder;
-import br.com.thiago.hotchat.entity.Message;
-import br.com.thiago.hotchat.entity.User;
-import br.com.thiago.hotchat.service.MessageService;
-import br.com.thiago.hotchat.service.UserService;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest
 @Ignore
 public class ChatControllerTest {
 
-	@MockBean
-	private UserService userService;
+	static final String WEBSOCKET_URI = "ws://localhost:8080/ws";
+	static final String WEBSOCKET_TOPIC = "/channel";
 
-	@MockBean
-	private MessageService messageService;
+	private BlockingQueue<String> blockingQueue;
+	private WebSocketStompClient stompClient;
+
+	@Before
+	public void setup() {
+		blockingQueue = new LinkedBlockingDeque<>();
+		stompClient = new WebSocketStompClient(
+				new SockJsClient(Arrays.asList(new WebSocketTransport(new StandardWebSocketClient()))));
+	}
 
 	@Test
-	public void sendMessageReturnSucess() throws Exception {
-		Message messageMock = new MessageBuilder().build();
-		Message messageMockSave = new MessageBuilder().withId(1L).build();
-		User userMockSave = new UserBuilder().withId(1L).build();
-		when(userService.findByEmail(Mockito.anyString())).thenReturn(userMockSave);
-		when(messageService.save(messageMock)).thenReturn(messageMockSave);
+	public void shouldReceiveAMessageFromTheServer() throws Exception {
+		StompSession session = stompClient.connect(WEBSOCKET_URI, new StompSessionHandlerAdapter() {
+		}).get(1, TimeUnit.SECONDS);
+		session.subscribe(WEBSOCKET_TOPIC, new DefaultStompFrameHandler());
 
+		String message = "MESSAGE TEST";
+		session.send(WEBSOCKET_TOPIC, message.getBytes());
+
+		Assert.assertEquals(message, blockingQueue.poll(1, TimeUnit.SECONDS));
+	}
+
+	class DefaultStompFrameHandler implements StompFrameHandler {
+
+		@Override
+		public Type getPayloadType(StompHeaders arg0) {
+			return byte[].class;
+		}
+
+		@Override
+		public void handleFrame(StompHeaders stompHeaders, Object o) {
+			blockingQueue.offer(new String((byte[]) o));
+		}
 	}
 
 }
