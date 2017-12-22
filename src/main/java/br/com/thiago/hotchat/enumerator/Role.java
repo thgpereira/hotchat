@@ -1,6 +1,6 @@
 package br.com.thiago.hotchat.enumerator;
 
-public enum RoleEnum {
+public enum Role {
 
 	USER
 

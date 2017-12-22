@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.thiago.hotchat.entity.User;
-import br.com.thiago.hotchat.enumerator.RoleEnum;
+import br.com.thiago.hotchat.enumerator.Role;
 import br.com.thiago.hotchat.exception.HotChatException;
 import br.com.thiago.hotchat.repository.UserRepository;
 import br.com.thiago.hotchat.service.UserService;
@@ -54,6 +54,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
+	public User update(User user) {
+		return userRepository.saveAndFlush(user);
+	}
+
+	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepository.findByEmail(email);
 		if (user == null) {
@@ -64,7 +69,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	private List<SimpleGrantedAuthority> getUserAuthority() {
-		return Arrays.asList(new SimpleGrantedAuthority(RoleEnum.USER.toString()));
+		return Arrays.asList(new SimpleGrantedAuthority(Role.USER.toString()));
 	}
 
 }

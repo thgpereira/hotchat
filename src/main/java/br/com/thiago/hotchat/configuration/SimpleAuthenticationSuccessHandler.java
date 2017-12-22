@@ -30,7 +30,7 @@ public class SimpleAuthenticationSuccessHandler implements AuthenticationSuccess
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-		userService.updateUserOnline(authentication.getName(), true);
+		// userService.updateUserOnline(authentication.getName(), true);
 		redirectStrategy.sendRedirect(request, response, URL_AFTER_LOGIN);
 
 	}

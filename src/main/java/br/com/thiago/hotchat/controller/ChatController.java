@@ -1,55 +1,62 @@
 package br.com.thiago.hotchat.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 
-import br.com.thiago.hotchat.dto.UserDTO;
+import br.com.thiago.hotchat.dto.MessageDTO;
+import br.com.thiago.hotchat.entity.Message;
 import br.com.thiago.hotchat.entity.User;
+import br.com.thiago.hotchat.enumerator.MessageStatus;
+import br.com.thiago.hotchat.service.MessageService;
 import br.com.thiago.hotchat.service.UserService;
-import io.swagger.annotations.ApiOperation;
 
-@RestController
-@RequestMapping(value = "/chat")
+@Controller
 public class ChatController {
 
 	@Autowired
 	private UserService userService;
 
-	@ApiOperation(value = "Busca o usuário logado", notes = "Serviço REST responsável pelo busca do usuário logado.")
-	@PostMapping(value = "/user/load")
-	public ResponseEntity<?> getLoadUserLogged() {
-		try {
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			User userLogged = userService.findByEmail(auth.getName());
-			UserDTO userDTO = new UserDTO();
-			BeanUtils.copyProperties(userLogged, userDTO);
-			return (ResponseEntity<?>) ResponseEntity.ok(userDTO);
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
+	@Autowired
+	private MessageService messageService;
+
+	@Autowired
+	private SimpMessagingTemplate simpMessagingTemplate;
+
+	@MessageMapping("/chat.sendMessage")
+	@SendTo("/channel/user/{email}")
+	public void sendMessage(@Payload Message message) {
+		User userTo = userService.findByEmail(message.getUserEmailTo());
+		User userFrom = userService.findByEmail(message.getUserEmailFrom());
+		if (userTo.isOnline()) {
+			message.setMessageStatus(MessageStatus.READ);
+		} else {
+			message.setMessageStatus(MessageStatus.PENDENT);
 		}
+		message.setUserFrom(userFrom);
+		message.setUserTo(userTo);
+		messageService.save(message);
+		MessageDTO messageDTO = new MessageDTO();
+		BeanUtils.copyProperties(message, messageDTO);
+		messageDTO.setIdUserFrom(userFrom.getId());
+		simpMessagingTemplate.convertAndSend("/channel/user/" + message.getUserEmailTo(), messageDTO);
 	}
 
-	@ApiOperation(value = "Lista os usuários cadastrados.", notes = "Serviço REST responsável pelo busca de todos os usuário cadastrados.")
-	@PostMapping(value = "/users/listall")
-	public ResponseEntity<?> getListAllUsers() {
-		try {
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			List<User> users = userService.findAllUsersExcludeEmail(auth.getName());
-			List<UserDTO> usersDTO = users.stream().map(u -> new UserDTO(u.getName(), u.getEmail(), u.isOnline()))
-					.collect(Collectors.toList());
-			return (ResponseEntity<?>) ResponseEntity.ok(usersDTO);
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+	@MessageMapping("/chat.addUser")
+	@SendTo("/channel/public")
+	public Message addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+		User user = userService.findByEmail(message.getUserEmailFrom());
+		user.setOnline(true);
+		userService.update(user);
+		headerAccessor.getSessionAttributes().put("name", user.getName());
+		headerAccessor.getSessionAttributes().put("email", user.getEmail());
+		message.setMessageStatus(MessageStatus.HIDDEN);
+		return message;
 	}
 
 }

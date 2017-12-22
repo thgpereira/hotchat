@@ -108,23 +108,23 @@ function onLoadChat() {
 }
 
 function loadUserLogged() {
-	$.post('/chat/user/load')
+	$.post('/user/user/load')
 	.done(function(data) {
 		$('#userNameLogged').html(data.name);
 		$('#userEmailLogged').val(data.email);
+		
+		connect();
 	}).fail(function(data) {
-		alert('Erro ao carregar o chat.');
+		alert('Erro ao selecionar o contato.');
 	});
 }
 
 function checkUsers() {
 	loadUsersChat();
 	function loadUsersChat() {
-		$.post('/chat/users/listall')
+		$.post('/user/users/listall')
 		.done(function(data) {
 			updateUsersContactList(data);
-		}).fail(function(data) {
-			alert('Erro ao carregar o chat.');
 		});
 	}
 	setInterval(loadUsersChat, 5000);
@@ -140,15 +140,84 @@ function updateUsersContactList(data) {
 
 function createHtmlUserContactList(user) {
 	var cssStatus = user.online ? 'chat-contact-status-online' : 'chat-contact-status-offline';
-	var html = '<div class="chat-contacts-body-name">';
-	html += '<div class="chat-contact-status ' + cssStatus + '"></div>';
-	html += '<div class="chat-contact-name" >';
-	html += '<a href="#" onclick="selectUserChat(' + user.name + ', ' + user.email + ')">' + user.name + '</a>';
+	var html = '<div class=\'chat-contacts-body-name\'>';
+	html += '<div class=\'chat-contact-status ' + cssStatus + '\'></div>';
+	html += '<div class=\'chat-contact-name\' >';
+	html += '<a href=\'#\' onclick=\'selectUserChat("' + user.id + '", "' + user.name + '", "' + user.email + '")\'>' + user.name + '<\a>';
 	html += '</div></div>';
 	return html;
 }
 
-function selectUserChat(name, email) {
+function selectUserChat(id, name, email) {
 	$('#userNameChat').html(name);
 	$('#userEmailChat').val(email);
+	$('#userIdChat').val(id);
+	$('#btnSendMessage').removeAttr('disabled');
+	$('#btnSendMessage').prop('title', 'Enviar mensagem');
+	var divId = 'divChat' + id;
+    checkDivChat(divId);
+    $('div[id^=\'divChat\']').addClass('hidden');
+    $('#' + divId).removeClass('hidden');
+}
+
+var stompClient = null;
+function connect() {
+	var userEmailLogged = $('#userEmailLogged').val();
+    if(userEmailLogged) {
+        var socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, onConnected, onError);
+    }
+}
+
+function onConnected() {
+	var userEmailLogged = $('#userEmailLogged').val();
+    stompClient.subscribe('/channel/user/' + userEmailLogged, onMessageReceived);
+    stompClient.send('/app/chat.addUser', {}, JSON.stringify({userEmailFrom: userEmailLogged}))
+}
+
+function onError(error) {
+	console.log(error);
+}
+
+function sendMessage() {
+    var messageContent = $('#inputMessage').val();
+    var userEmailFrom = $('#userEmailLogged').val();
+    var userEmailTo = $('#userEmailChat').val();
+    if(messageContent && stompClient) {
+        var chatMessage = {
+        	userEmailFrom: userEmailFrom,
+        	userEmailTo: userEmailTo,
+            content: messageContent
+        };
+        $('#inputMessage').val('');
+        var divId = 'divChat' + $('#userIdChat').val();
+        var message = {date: new Date(), content: messageContent};
+        addMessageDiv(divId, message, 'darker-right', 'time-left');
+        stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(chatMessage));
+    }
+}
+
+function onMessageReceived(payload) {
+    var message = JSON.parse(payload.body);
+    if(message.messageStatus != 'HIDDEN') {
+    	var divId = 'divChat' + message.idUserFrom;
+    	checkDivChat(divId);
+    	addMessageDiv(divId, message, '', 'time-right');
+    }
+}
+
+function checkDivChat(divId) {
+	if ($('#' + divId).length == 0) {
+		var divChat = '<div id="' + divId + '" class="messages hidden"></div>'
+		$('#areaMessages').append(divChat);
+	}
+}
+
+function addMessageDiv(divId, message, cssMessage, cssTime) {
+	var dateFormat = moment(message.date).format('DD/MM/YYYY HH:mm');
+	var html = '<div class="chat-message ' + cssMessage + '">';
+	html += '<p>' + message.content + '</p>';
+	html += '<span class="' + cssTime + '">' + dateFormat + '</span>';
+	$('#' + divId).append(html);
 }

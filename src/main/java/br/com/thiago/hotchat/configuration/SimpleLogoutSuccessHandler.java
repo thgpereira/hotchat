@@ -30,7 +30,7 @@ public class SimpleLogoutSuccessHandler implements LogoutSuccessHandler {
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException {
-		userService.updateUserOnline(authentication.getName(), false);
+		// userService.updateUserOnline(authentication.getName(), false);
 		redirectStrategy.sendRedirect(request, response, URL_AFTER_LOGOUT);
 
 	}

@@ -6,9 +6,12 @@
 		<title>HotChat - O seu chat</title>
 		<link href="/css/hotchat.css" rel="stylesheet">
 		<link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-		<script src="/js/hotchat.js"></script>
 		<script src="/webjars/jquery/jquery.min.js"></script>
  		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+ 		<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+ 		<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+ 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.js"></script>
+		<script src="/js/hotchat.js"></script>
 	</head>
 	
 	<body onload="onLoadChat()">
@@ -37,19 +40,10 @@
 				<div class="contact-message">
 					<div class="contact-message-name" id="userNameChat">Selecione um usuário na lista</div>
 					<input type="text" name="userChatEmail" id="userEmailChat" class="hidden" />
+					<input type="text" name="userChatEmail" id="userIdChat" class="hidden" />
 					<div class="contact-message-actions">---</div>
 				</div>
-				<div class="messages">
-					<div class="chat-message">
-						<p>Hello. How are you today?</p>
-						<span class="time-right">20-12-17 11:00</span>
-					</div>
-					
-					<div class="chat-message darker-right">
-						<p>Hey! I'm fine. Thanks for asking!</p>
-						<span class="time-left">20-12-17 11:01</span>
-					</div>
-				</div>
+				<div class="messages-area" id="areaMessages"></div>
 			</div>
 		</div>
 		
@@ -58,7 +52,7 @@
 				<input type="text" id="inputMessage" name="inputMessage" class="form-control" placeholder="Digite aqui sua mensagem" />
 			</div>
 			<div class="chat-send-message-button">
-				<button type="button" class="btn btn-info">Enviar</button>
+				<button type="button" class="btn btn-info" id="btnSendMessage" disabled="disabled" title="Selecione um contato" onclick="sendMessage()">Enviar</button>
 			</div>
 		</div>
 	</body>

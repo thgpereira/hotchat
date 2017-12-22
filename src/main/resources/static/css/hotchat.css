@@ -136,6 +136,10 @@ body {
 	background: #ddd;	
 }
 
+.messages-area {
+	width: 450px;
+}
+
 .messages {
 	width: 450px;
 	height: 500px;
