@@ -2,6 +2,7 @@ package br.com.thiago.hotchat.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.thiago.hotchat.dto.UserDTO;
 import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.enumerator.Role;
 import br.com.thiago.hotchat.exception.HotChatException;
@@ -44,8 +46,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public List<User> findAllUsersExcludeEmail(String emailExclude) {
-		return userRepository.findByEmailNotOrderByOnlineDescNameAsc(emailExclude);
+	public List<UserDTO> findAllUsersConvertDTO() {
+		List<User> users = userRepository.findAllByOrderByOnlineDescNameAsc();
+		List<UserDTO> usersDTO = users.stream()
+				.map(u -> new UserDTO(u.getId(), u.getName(), u.getEmail(), u.isOnline())).collect(Collectors.toList());
+		return usersDTO;
 	}
 
 	@Override

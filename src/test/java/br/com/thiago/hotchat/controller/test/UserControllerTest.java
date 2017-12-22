@@ -4,9 +4,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +35,9 @@ public class UserControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
+
+	@MockBean
+	private SimpMessageSendingOperations simpMessagingTemplate;
 
 	@MockBean
 	private UserService userService;
@@ -77,13 +78,6 @@ public class UserControllerTest {
 		User userMockSave = new UserBuilder().withId(1L).build();
 		when(userService.findByEmail(Mockito.anyString())).thenReturn(userMockSave);
 		mvc.perform(post("/user/user/load").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
-	}
-
-	@Test
-	public void getAllUsersReturnSucess() throws Exception {
-		List<User> usersMockSave = Arrays.asList(new UserBuilder().withId(1L).build());
-		when(userService.findAllUsersExcludeEmail(Mockito.anyString())).thenReturn(usersMockSave);
-		mvc.perform(post("/user/users/listall").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 	}
 
 }

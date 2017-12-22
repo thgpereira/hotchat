@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	User findByEmail(String email);
 
-	List<User> findByEmailNotOrderByOnlineDescNameAsc(String email);
+	List<User> findAllByOrderByOnlineDescNameAsc();
 
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE User u SET u.online = :online WHERE u.email = :email")

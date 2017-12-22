@@ -104,7 +104,6 @@ function loadLoginPage() {
 
 function onLoadChat() {
 	loadUserLogged();
-	checkUsers();
 }
 
 function loadUserLogged() {
@@ -117,35 +116,6 @@ function loadUserLogged() {
 	}).fail(function(data) {
 		alert('Erro ao selecionar o contato.');
 	});
-}
-
-function checkUsers() {
-	loadUsersChat();
-	function loadUsersChat() {
-		$.post('/user/users/listall')
-		.done(function(data) {
-			updateUsersContactList(data);
-		});
-	}
-	setInterval(loadUsersChat, 5000);
-}
-
-function updateUsersContactList(data) {
-	var html = '';
-	data.forEach(user => {
-		html += createHtmlUserContactList(user);
-     });
-	$('#chat-contacts-body').html(html);
-}
-
-function createHtmlUserContactList(user) {
-	var cssStatus = user.online ? 'chat-contact-status-online' : 'chat-contact-status-offline';
-	var html = '<div class=\'chat-contacts-body-name\'>';
-	html += '<div class=\'chat-contact-status ' + cssStatus + '\'></div>';
-	html += '<div class=\'chat-contact-name\' >';
-	html += '<a href=\'#\' onclick=\'selectUserChat("' + user.id + '", "' + user.name + '", "' + user.email + '")\'>' + user.name + '<\a>';
-	html += '</div></div>';
-	return html;
 }
 
 function selectUserChat(id, name, email) {
@@ -173,6 +143,7 @@ function connect() {
 function onConnected() {
 	var userEmailLogged = $('#userEmailLogged').val();
     stompClient.subscribe('/channel/user/' + userEmailLogged, onMessageReceived);
+    stompClient.subscribe('/channel/listContacts', onListContactsReceived);
     stompClient.send('/app/chat.addUser', {}, JSON.stringify({userEmailFrom: userEmailLogged}))
 }
 
@@ -218,4 +189,25 @@ function addMessageDiv(divId, message, cssMessage, cssTime) {
 	html += '<p>' + message.content + '</p>';
 	html += '<span class="' + cssTime + '">' + dateFormat + '</span>';
 	$('#' + divId).append(html);
+}
+
+function onListContactsReceived(payload) {
+	var html = '';
+	var userEmailLogged = $('#userEmailLogged').val();
+	JSON.parse(payload.body).forEach(user => {
+		if(userEmailLogged !== user.email) {
+			html += createHtmlUserContactList(user);	
+		}
+     });
+	$('#chat-contacts-body').html(html);
+}
+
+function createHtmlUserContactList(user) {
+	var cssStatus = user.online ? 'chat-contact-status-online' : 'chat-contact-status-offline';
+	var html = '<div class=\'chat-contacts-body-name\'>';
+	html += '<div class=\'chat-contact-status ' + cssStatus + '\'></div>';
+	html += '<div class=\'chat-contact-name\' >';
+	html += '<a href=\'#\' onclick=\'selectUserChat("' + user.id + '", "' + user.name + '", "' + user.email + '")\'>' + user.name + '<\a>';
+	html += '</div></div>';
+	return html;
 }

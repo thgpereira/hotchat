@@ -2,6 +2,7 @@ package br.com.thiago.hotchat.service;
 
 import java.util.List;
 
+import br.com.thiago.hotchat.dto.UserDTO;
 import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.exception.HotChatException;
 
@@ -11,7 +12,7 @@ public interface UserService {
 
 	void updateUserOnline(String email, boolean online);
 
-	List<User> findAllUsersExcludeEmail(String emailExclude);
+	List<UserDTO> findAllUsersConvertDTO();
 
 	User findByEmail(String email);
 

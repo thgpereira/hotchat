@@ -1,5 +1,7 @@
 package br.com.thiago.hotchat.controller;
 
+import java.util.List;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -10,6 +12,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import br.com.thiago.hotchat.dto.MessageDTO;
+import br.com.thiago.hotchat.dto.UserDTO;
 import br.com.thiago.hotchat.entity.Message;
 import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.enumerator.MessageStatus;
@@ -53,6 +56,14 @@ public class ChatController {
 		user.setOnline(true);
 		userService.update(user);
 		headerAccessor.getSessionAttributes().put("email", user.getEmail());
+		updateListContacts(headerAccessor);
+	}
+
+	@MessageMapping("/chat.listContacts")
+	@SendTo("/channel/listContacts")
+	public void updateListContacts(SimpMessageHeaderAccessor headerAccessor) {
+		List<UserDTO> usersDTO = userService.findAllUsersConvertDTO();
+		simpMessagingTemplate.convertAndSend("/channel/listContacts", usersDTO);
 	}
 
 }

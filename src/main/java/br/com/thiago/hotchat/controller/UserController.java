@@ -1,11 +1,11 @@
 package br.com.thiago.hotchat.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +27,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private SimpMessageSendingOperations simpMessagingTemplate;
+
 	@ApiOperation(value = "Cadastra um usuário", notes = "Serviço REST responsável pelo cadastro de um usuário.")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "name", value = "Nome do usuário", required = true, dataType = "string", paramType = "form"),
@@ -36,6 +39,7 @@ public class UserController {
 	public ResponseEntity<?> getCreate(User userRegister) {
 		try {
 			userService.save(userRegister);
+			sendUpdataListContactsChat();
 			return (ResponseEntity<?>) ResponseEntity.ok(userRegister);
 		} catch (HotChatException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
@@ -56,18 +60,12 @@ public class UserController {
 		}
 	}
 
-	@ApiOperation(value = "Lista os usuários cadastrados.", notes = "Serviço REST responsável pelo busca de todos os usuário cadastrados.")
-	@PostMapping(value = "/users/listall")
-	public ResponseEntity<?> getListAllUsers() {
+	private void sendUpdataListContactsChat() {
 		try {
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			List<User> users = userService.findAllUsersExcludeEmail(auth.getName());
-			List<UserDTO> usersDTO = users.stream()
-					.map(u -> new UserDTO(u.getId(), u.getName(), u.getEmail(), u.isOnline()))
-					.collect(Collectors.toList());
-			return (ResponseEntity<?>) ResponseEntity.ok(usersDTO);
+			List<UserDTO> usersDTO = userService.findAllUsersConvertDTO();
+			simpMessagingTemplate.convertAndSend("/channel/listContacts", usersDTO);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
+			System.out.println(e.getMessage());
 		}
 	}
 

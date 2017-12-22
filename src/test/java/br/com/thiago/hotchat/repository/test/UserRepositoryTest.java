@@ -1,7 +1,6 @@
 package br.com.thiago.hotchat.repository.test;
 
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -57,9 +56,11 @@ public class UserRepositoryTest {
 		entityManager.persist(userMock1);
 		entityManager.persist(userMock2);
 		entityManager.persist(userMock3);
-		List<User> users = repository.findByEmailNotOrderByOnlineDescNameAsc("unitteste1@email.com.br");
+		List<User> users = repository.findAllByOrderByOnlineDescNameAsc();
 		List<String> emails = users.stream().map(u -> u.getEmail()).collect(Collectors.toList());
-		assertThat(emails, not(hasItem("unitteste1@email.com.br")));
+		assertThat(emails, hasItem("unitteste@email.com.br"));
+		assertThat(emails, hasItem("unitteste1@email.com.br"));
+		assertThat(emails, hasItem("unitteste2@email.com.br"));
 	}
 
 	@Test
