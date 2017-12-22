@@ -12,6 +12,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import br.com.thiago.hotchat.dto.UserDTO;
 import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.service.UserService;
+import br.com.thiago.hotchat.util.Url;
 
 @Component
 public class WebSocketEventListener {
@@ -33,7 +34,7 @@ public class WebSocketEventListener {
 			userService.update(user);
 
 			List<UserDTO> usersDTO = userService.findAllUsersConvertDTO();
-			simpMessagingTemplate.convertAndSend("/channel/listContacts", usersDTO);
+			simpMessagingTemplate.convertAndSend(Url.CHANNEL_CHAT_CONTACTS_LIST, usersDTO);
 		}
 	}
 }

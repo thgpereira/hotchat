@@ -18,6 +18,7 @@ import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.enumerator.MessageStatus;
 import br.com.thiago.hotchat.service.MessageService;
 import br.com.thiago.hotchat.service.UserService;
+import br.com.thiago.hotchat.util.Url;
 
 @Controller
 public class ChatController {
@@ -31,8 +32,8 @@ public class ChatController {
 	@Autowired
 	private SimpMessagingTemplate simpMessagingTemplate;
 
-	@MessageMapping("/chat.sendMessage")
-	@SendTo("/channel/user/{email}")
+	@MessageMapping(Url.SEND_MESSAGE)
+	@SendTo(Url.CHANNEL_MESSAGE_USER_PARAM)
 	public void sendMessage(@Payload Message message) {
 		User userTo = userService.findByEmail(message.getUserEmailTo());
 		User userFrom = userService.findByEmail(message.getUserEmailFrom());
@@ -47,7 +48,7 @@ public class ChatController {
 		MessageDTO messageDTO = new MessageDTO();
 		BeanUtils.copyProperties(message, messageDTO);
 		messageDTO.setIdUserFrom(userFrom.getId());
-		simpMessagingTemplate.convertAndSend("/channel/user/" + message.getUserEmailTo(), messageDTO);
+		simpMessagingTemplate.convertAndSend(Url.CHANNEL_MESSAGE_USER + message.getUserEmailTo(), messageDTO);
 	}
 
 	@MessageMapping("/chat.addUser")
@@ -59,11 +60,11 @@ public class ChatController {
 		updateListContacts(headerAccessor);
 	}
 
-	@MessageMapping("/chat.listContacts")
-	@SendTo("/channel/listContacts")
+	@MessageMapping(Url.CHAT_CONTACTS_LIST)
+	@SendTo(Url.CHANNEL_CHAT_CONTACTS_LIST)
 	public void updateListContacts(SimpMessageHeaderAccessor headerAccessor) {
 		List<UserDTO> usersDTO = userService.findAllUsersConvertDTO();
-		simpMessagingTemplate.convertAndSend("/channel/listContacts", usersDTO);
+		simpMessagingTemplate.convertAndSend(Url.CHANNEL_CHAT_CONTACTS_LIST, usersDTO);
 	}
 
 }

@@ -16,6 +16,7 @@ import br.com.thiago.hotchat.dto.UserDTO;
 import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.exception.HotChatException;
 import br.com.thiago.hotchat.service.UserService;
+import br.com.thiago.hotchat.util.Url;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -63,7 +64,7 @@ public class UserController {
 	private void sendUpdataListContactsChat() {
 		try {
 			List<UserDTO> usersDTO = userService.findAllUsersConvertDTO();
-			simpMessagingTemplate.convertAndSend("/channel/listContacts", usersDTO);
+			simpMessagingTemplate.convertAndSend(Url.CHANNEL_CHAT_CONTACTS_LIST, usersDTO);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
