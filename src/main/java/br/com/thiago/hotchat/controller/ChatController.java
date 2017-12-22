@@ -13,6 +13,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 
 import br.com.thiago.hotchat.dto.MessageDTO;
 import br.com.thiago.hotchat.dto.UserDTO;
@@ -75,7 +76,13 @@ public class ChatController {
 	private void getMessagesOffline(String emailUser) {
 		User userTo = userService.findByEmail(emailUser);
 		List<MessageDTO> messagesDTO = messageService.findMessagesPedentByUserToConvertDTO(userTo);
-		simpMessagingTemplate.convertAndSend(Url.CHANNEL_MESSAGES_OFFLINE + userTo.getEmail(), messagesDTO);
+		if (!CollectionUtils.isEmpty(messagesDTO)) {
+			simpMessagingTemplate.convertAndSend(Url.CHANNEL_MESSAGES_OFFLINE + userTo.getEmail(), messagesDTO);
+			updateMessagesToRead(messagesDTO);
+		}
+	}
+
+	private void updateMessagesToRead(List<MessageDTO> messagesDTO) {
 		List<Long> ids = messagesDTO.stream().map(MessageDTO::getId).collect(Collectors.toList());
 		messageService.updateMessagesPendentToRead(ids);
 	}

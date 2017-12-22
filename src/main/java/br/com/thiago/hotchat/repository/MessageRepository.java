@@ -16,7 +16,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 	List<Message> findByUserToAndMessageStatusOrderByUserToAscDateAsc(User userTo, MessageStatus messageStatus);
 
 	@Modifying(clearAutomatically = true)
-	@Query("UPDATE Message m SET m.messageStatus = :status WHERE m.id IN(:ids)")
+	@Query("UPDATE Message m SET m.messageStatus = :status WHERE m.id IN (:ids)")
 	void updateMessagesRead(@Param("status") MessageStatus status, @Param("ids") List<Long> ids);
 
 }
