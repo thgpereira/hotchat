@@ -41,11 +41,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public void updateUserOnline(String email, boolean online) {
-		userRepository.updateUserOnline(email, online);
-	}
-
-	@Override
 	public List<UserDTO> findAllUsersConvertDTO() {
 		List<User> users = userRepository.findAllByOrderByOnlineDescNameAsc();
 		List<UserDTO> usersDTO = users.stream()

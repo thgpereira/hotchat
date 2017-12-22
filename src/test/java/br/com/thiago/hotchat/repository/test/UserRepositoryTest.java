@@ -49,7 +49,7 @@ public class UserRepositoryTest {
 	}
 
 	@Test
-	public void findUsersExcludeEmail() {
+	public void findUsersOnlineSuccess() {
 		User userMock1 = new UserBuilder().build();
 		User userMock2 = new UserBuilder().withEmail("unitteste1@email.com.br").build();
 		User userMock3 = new UserBuilder().withEmail("unitteste2@email.com.br").build();
@@ -61,17 +61,6 @@ public class UserRepositoryTest {
 		assertThat(emails, hasItem("unitteste@email.com.br"));
 		assertThat(emails, hasItem("unitteste1@email.com.br"));
 		assertThat(emails, hasItem("unitteste2@email.com.br"));
-	}
-
-	@Test
-	public void updateUserOnline() {
-		User userMock = new UserBuilder().build();
-		User userSave = entityManager.persist(userMock);
-		User userBefore = repository.findOne(userSave.getId());
-		assertEquals(userBefore.isOnline(), false);
-		repository.updateUserOnline(userMock.getEmail(), true);
-		User userAfter = repository.findOne(userSave.getId());
-		assertEquals(userAfter.isOnline(), true);
 	}
 
 }

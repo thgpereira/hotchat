@@ -1,6 +1,9 @@
 package br.com.thiago.hotchat.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import br.com.thiago.hotchat.service.UserService;
 import br.com.thiago.hotchat.util.Url;
 
 @Controller
+@Transactional
 public class ChatController {
 
 	@Autowired
@@ -57,14 +61,23 @@ public class ChatController {
 		user.setOnline(true);
 		userService.update(user);
 		headerAccessor.getSessionAttributes().put("email", user.getEmail());
-		updateListContacts(headerAccessor);
+		updateListContacts();
+		getMessagesOffline(user.getEmail());
 	}
 
 	@MessageMapping(Url.CHAT_CONTACTS_LIST)
 	@SendTo(Url.CHANNEL_CHAT_CONTACTS_LIST)
-	public void updateListContacts(SimpMessageHeaderAccessor headerAccessor) {
+	public void updateListContacts() {
 		List<UserDTO> usersDTO = userService.findAllUsersConvertDTO();
 		simpMessagingTemplate.convertAndSend(Url.CHANNEL_CHAT_CONTACTS_LIST, usersDTO);
+	}
+
+	private void getMessagesOffline(String emailUser) {
+		User userTo = userService.findByEmail(emailUser);
+		List<MessageDTO> messagesDTO = messageService.findMessagesPedentByUserToConvertDTO(userTo);
+		simpMessagingTemplate.convertAndSend(Url.CHANNEL_MESSAGES_OFFLINE + userTo.getEmail(), messagesDTO);
+		List<Long> ids = messagesDTO.stream().map(MessageDTO::getId).collect(Collectors.toList());
+		messageService.updateMessagesPendentToRead(ids);
 	}
 
 }

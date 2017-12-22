@@ -10,8 +10,6 @@ public interface UserService {
 
 	User save(User newUser) throws HotChatException;
 
-	void updateUserOnline(String email, boolean online);
-
 	List<UserDTO> findAllUsersConvertDTO();
 
 	User findByEmail(String email);

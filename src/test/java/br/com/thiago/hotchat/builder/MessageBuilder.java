@@ -25,4 +25,24 @@ public class MessageBuilder {
 		return this;
 	}
 
+	public MessageBuilder withUserFrom(User userFrom) {
+		this.userFrom = userFrom;
+		return this;
+	}
+
+	public MessageBuilder withUserTo(User userTo) {
+		this.userTo = userTo;
+		return this;
+	}
+
+	public MessageBuilder withStatus(MessageStatus messageStatus) {
+		this.messageStatus = messageStatus;
+		return this;
+	}
+
+	public MessageBuilder addDateTody() {
+		this.date = new Date();
+		return this;
+	}
+
 }

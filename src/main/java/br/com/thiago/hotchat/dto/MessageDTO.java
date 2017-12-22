@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MessageDTO {
 
+	private Long id;
 	private Long idUserFrom;
 	private String userEmailFrom;
 	private String content;

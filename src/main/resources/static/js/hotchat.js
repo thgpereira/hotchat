@@ -144,6 +144,7 @@ function onConnected() {
 	var userEmailLogged = $('#userEmailLogged').val();
     stompClient.subscribe('/channel/user/' + userEmailLogged, onMessageReceived);
     stompClient.subscribe('/channel/listContacts', onListContactsReceived);
+    stompClient.subscribe('/channel/messagesOffline/' + userEmailLogged, onMessageReceivedOffline);
     stompClient.send('/app/chat.addUser', {}, JSON.stringify({userEmailFrom: userEmailLogged}))
 }
 
@@ -210,4 +211,12 @@ function createHtmlUserContactList(user) {
 	html += '<a href=\'#\' onclick=\'selectUserChat("' + user.id + '", "' + user.name + '", "' + user.email + '")\'>' + user.name + '<\a>';
 	html += '</div></div>';
 	return html;
+}
+
+function onMessageReceivedOffline(payload) {
+	JSON.parse(payload.body).forEach(message => {
+		var divId = 'divChat' + message.idUserFrom;
+		checkDivChat(divId);
+		addMessageDiv(divId, message, '', 'time-right');
+     });
 }
