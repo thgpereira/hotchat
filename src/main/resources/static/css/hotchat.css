@@ -217,6 +217,10 @@ body {
 	float: right;
 }
 
+.chat-receive-message-contact {
+	font-weight: bold;
+}
+
 .center {
 	text-align: center;
 }

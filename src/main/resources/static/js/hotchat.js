@@ -45,6 +45,13 @@ $(document).ready(function() {
 			requestCreateUser();
 		}
 	});
+
+	$('#inputMessage').keypress(function(event) {
+		var keycode = (event.keyCode ? event.keyCode : event.which);
+	    if(keycode == '13'){
+	    	$('#btnSendMessage').click();
+	    }
+	});
 });
 
 function requestCreateUser() {
@@ -123,11 +130,14 @@ function selectUserChat(id, name, email) {
 	$('#userEmailChat').val(email);
 	$('#userIdChat').val(id);
 	$('#btnSendMessage').removeAttr('disabled');
+	$('#inputMessage').removeAttr('disabled');
 	$('#btnSendMessage').prop('title', 'Enviar mensagem');
 	var divId = 'divChat' + id;
     checkDivChat(divId);
     $('div[id^=\'divChat\']').addClass('hidden');
     $('#' + divId).removeClass('hidden');
+    var spanId = "spanChatName" + id;
+	$('#' + spanId).removeClass('chat-receive-message-contact');	
 }
 
 var stompClient = null;
@@ -163,9 +173,10 @@ function sendMessage() {
             content: messageContent
         };
         $('#inputMessage').val('');
-        var divId = 'divChat' + $('#userIdChat').val();
+        var idUser = $('#userIdChat').val();
+        var divId = 'divChat' + idUser;
         var message = {date: new Date(), content: messageContent};
-        addMessageDiv(divId, message, 'darker-right', 'time-left');
+        addMessageDiv(divId, message, 'darker-right', 'time-left', idUser);
         stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(chatMessage));
     }
 }
@@ -174,7 +185,7 @@ function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
 	var divId = 'divChat' + message.idUserFrom;
 	checkDivChat(divId);
-	addMessageDiv(divId, message, '', 'time-right');
+	addMessageDiv(divId, message, '', 'time-right', message.idUserFrom);
 }
 
 function checkDivChat(divId) {
@@ -184,12 +195,20 @@ function checkDivChat(divId) {
 	}
 }
 
-function addMessageDiv(divId, message, cssMessage, cssTime) {
+function addMessageDiv(divId, message, cssMessage, cssTime, id) {
 	var dateFormat = moment(message.date).format('DD/MM/YYYY HH:mm');
 	var html = '<div class="chat-message ' + cssMessage + '">';
 	html += '<p>' + message.content + '</p>';
 	html += '<span class="' + cssTime + '">' + dateFormat + '</span>';
 	$('#' + divId).append(html);
+	checkBoldName(divId, id);
+}
+
+function checkBoldName(divId, id) {
+	if($('#' + divId).is(':hidden')) {
+		var spanId = "spanChatName" + id;
+		$('#' + spanId).addClass('chat-receive-message-contact');		
+	}
 }
 
 function onListContactsReceived(payload) {
@@ -208,7 +227,8 @@ function createHtmlUserContactList(user) {
 	var html = '<div class=\'chat-contacts-body-name\'>';
 	html += '<div class=\'chat-contact-status ' + cssStatus + '\'></div>';
 	html += '<div class=\'chat-contact-name\' >';
-	html += '<a href=\'#\' onclick=\'selectUserChat("' + user.id + '", "' + user.name + '", "' + user.email + '")\'>' + user.name + '<\a>';
+	html += '<a href=\'#\' onclick=\'selectUserChat("' + user.id + '", "' + user.name + '", "' + user.email + '")\'>';
+	html += '<span id=\'spanChatName' + user.id + '\'>' + user.name + '</span><\a>'
 	html += '</div></div>';
 	return html;
 }
@@ -217,6 +237,6 @@ function onMessageReceivedOffline(payload) {
 	JSON.parse(payload.body).forEach(message => {
 		var divId = 'divChat' + message.idUserFrom;
 		checkDivChat(divId);
-		addMessageDiv(divId, message, '', 'time-right');
+		addMessageDiv(divId, message, '', 'time-right', message.idUserFrom);
      });
 }
