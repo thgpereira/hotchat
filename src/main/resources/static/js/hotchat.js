@@ -201,6 +201,8 @@ function addMessageDiv(divId, message, cssMessage, cssTime, id) {
 	html += '<p>' + message.content + '</p>';
 	html += '<span class="' + cssTime + '">' + dateFormat + '</span>';
 	$('#' + divId).append(html);
+	var d = $('#' + divId);
+	d.scrollTop(d.prop("scrollHeight"));
 	checkBoldName(divId, id);
 }
 
@@ -227,7 +229,7 @@ function createHtmlUserContactList(user) {
 	var html = '<div class=\'chat-contacts-body-name\'>';
 	html += '<div class=\'chat-contact-status ' + cssStatus + '\'></div>';
 	html += '<div class=\'chat-contact-name\' >';
-	html += '<a href=\'#\' onclick=\'selectUserChat("' + user.id + '", "' + user.name + '", "' + user.email + '")\'>';
+	html += '<span class=\'fake-link\' onclick=\'selectUserChat("' + user.id + '", "' + user.name + '", "' + user.email + '")\'>';
 	html += '<span id=\'spanChatName' + user.id + '\'>' + user.name + '</span><\a>'
 	html += '</div></div>';
 	return html;

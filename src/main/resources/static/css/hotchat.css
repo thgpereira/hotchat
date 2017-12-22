@@ -163,6 +163,11 @@ body {
 
 .contact-message-actions {
 	float: right;
+	padding: 0 5px;
+}
+
+.contact-message-actions span {
+	padding: 0 5px;
 }
 
 .chat-messages {
@@ -219,6 +224,11 @@ body {
 
 .chat-receive-message-contact {
 	font-weight: bold;
+}
+
+.fake-link {
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .center {
