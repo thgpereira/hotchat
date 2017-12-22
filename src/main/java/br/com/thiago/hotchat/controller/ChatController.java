@@ -48,15 +48,11 @@ public class ChatController {
 	}
 
 	@MessageMapping("/chat.addUser")
-	@SendTo("/channel/public")
-	public Message addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+	public void addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
 		User user = userService.findByEmail(message.getUserEmailFrom());
 		user.setOnline(true);
 		userService.update(user);
-		headerAccessor.getSessionAttributes().put("name", user.getName());
 		headerAccessor.getSessionAttributes().put("email", user.getEmail());
-		message.setMessageStatus(MessageStatus.HIDDEN);
-		return message;
 	}
 
 }

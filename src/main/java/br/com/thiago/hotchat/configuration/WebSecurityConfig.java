@@ -21,12 +21,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@Autowired
-	private SimpleAuthenticationSuccessHandler loginSuccessHandler;
-
-	@Autowired
-	private SimpleLogoutSuccessHandler logoutSuccessHandler;
-
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
@@ -36,9 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/", "/login", "/registration", "/user/**").permitAll().anyRequest()
 				.authenticated().and().csrf().disable().formLogin().loginPage("/login").failureUrl("/login?error=true")
-				.successHandler(loginSuccessHandler).usernameParameter("inputEmail").passwordParameter("inputPassword")
-				.and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-				.logoutSuccessHandler(logoutSuccessHandler);
+				.defaultSuccessUrl("/chat/index.html").usernameParameter("inputEmail")
+				.passwordParameter("inputPassword").and().logout()
+				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/");
 	}
 
 	@Override

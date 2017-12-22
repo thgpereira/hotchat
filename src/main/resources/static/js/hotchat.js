@@ -200,11 +200,9 @@ function sendMessage() {
 
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
-    if(message.messageStatus != 'HIDDEN') {
-    	var divId = 'divChat' + message.idUserFrom;
-    	checkDivChat(divId);
-    	addMessageDiv(divId, message, '', 'time-right');
-    }
+	var divId = 'divChat' + message.idUserFrom;
+	checkDivChat(divId);
+	addMessageDiv(divId, message, '', 'time-right');
 }
 
 function checkDivChat(divId) {
