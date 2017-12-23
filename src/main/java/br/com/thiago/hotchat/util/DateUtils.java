@@ -12,7 +12,7 @@ public final class DateUtils {
 	public static final String FIRST_HOUR_DAY = "00:00:00";
 	public static final String LAST_HOUR_DAY = "23:59:59";
 
-	public static final String FORMAT_DATE = "dd-MM-yyyy HH:mm:ss";
+	public static final String FORMAT_DATE = "dd/MM/yyyy HH:mm:ss";
 
 	public static final String EMPTY = " ";
 

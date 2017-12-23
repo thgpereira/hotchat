@@ -77,15 +77,17 @@ public class MessageRepositoryTest {
 	public void findMessagesByHistorySuccess() throws ParseException {
 		User userFrom = entityManager.persist(new UserBuilder().build());
 		User userTo = entityManager.persist(new UserBuilder().withEmail("unitteste2@email.com.br").build());
-		Date start = DateUtils.formatFirstDateDay("01-01-2017");
-		Date end = DateUtils.formatLastDateDay("01-01-2017");
-		createMessage(MessageStatus.READ, userFrom, userTo, DateUtils.formatDate("01-01-2017 00:00:00"));
-		createMessage(MessageStatus.READ, userFrom, userTo, DateUtils.formatDate("02-01-2017 01:23:23"));
-		createMessage(MessageStatus.READ, userTo, userFrom, DateUtils.formatDate("01-01-2017 23:59:59"));
-		createMessage(MessageStatus.READ, userFrom, userTo, DateUtils.formatDate("01-01-2017 23:59:59"));
-		List<Message> messagesHistory = repository.findByUserFromAndUserToAndDateBetweenOrderByDateAsc(userFrom, userTo,
+		User userToNo = entityManager.persist(new UserBuilder().withEmail("unitteste3@email.com.br").build());
+		Date start = DateUtils.formatFirstDateDay("01/01/2017");
+		Date end = DateUtils.formatLastDateDay("01/01/2017");
+		createMessage(MessageStatus.READ, userFrom, userTo, DateUtils.formatDate("01/01/2017 00:00:00"));
+		createMessage(MessageStatus.READ, userFrom, userTo, DateUtils.formatDate("02/01/2017 01:23:23"));
+		createMessage(MessageStatus.READ, userTo, userFrom, DateUtils.formatDate("01/01/2017 23:59:59"));
+		createMessage(MessageStatus.READ, userFrom, userTo, DateUtils.formatDate("01/01/2017 23:59:59"));
+		createMessage(MessageStatus.READ, userFrom, userToNo, DateUtils.formatDate("01/01/2017 13:39:57"));
+		List<Message> messagesHistory = repository.findByUserFromAndUserToAndDateBetween(userFrom, userTo,
 				start, end);
-		assertThat(messagesHistory, hasSize(2));
+		assertThat(messagesHistory, hasSize(3));
 	}
 
 	private Message createMessage(MessageStatus messageStatus, User userFrom, User userTo) {

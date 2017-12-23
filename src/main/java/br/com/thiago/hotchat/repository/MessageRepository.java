@@ -20,6 +20,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 	@Query("UPDATE Message m SET m.messageStatus = :status WHERE m.id IN (:ids)")
 	void updateMessagesRead(@Param("status") MessageStatus status, @Param("ids") List<Long> ids);
 
-	List<Message> findByUserFromAndUserToAndDateBetweenOrderByDateAsc(User userFrom, User userTo, Date start, Date end);
+	@Query("FROM Message m "
+			+ "WHERE ((m.userFrom = :userFrom AND m.userTo = :userTo) OR (m.userFrom = :userTo AND m.userTo = :userFrom)) AND "
+			+ "m.date BETWEEN :dateStart AND :dateEnd ORDER BY m.date")
+	List<Message> findByUserFromAndUserToAndDateBetween(@Param("userFrom") User userFrom, @Param("userTo") User userTo,
+			@Param("dateStart") Date start, @Param("dateEnd") Date end);
 
 }

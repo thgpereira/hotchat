@@ -52,6 +52,8 @@ $(document).ready(function() {
 	    	$('#btnSendMessage').click();
 	    }
 	});
+	$('#dateHistoryStart').mask("00/00/0000", { placeholder: "__/__/____" }) ;
+	$('#dateHistoryEnd').mask("00/00/0000", { placeholder: "__/__/____" }) ;
 });
 
 function requestCreateUser() {
@@ -126,12 +128,14 @@ function loadUserLogged() {
 }
 
 function selectUserChat(id, name, email) {
+	hiddenHistoryFind();
 	$('#userNameChat').html(name);
 	$('#userEmailChat').val(email);
 	$('#userIdChat').val(id);
 	$('#btnSendMessage').removeAttr('disabled');
 	$('#inputMessage').removeAttr('disabled');
 	$('#btnSendMessage').prop('title', 'Enviar mensagem');
+	$('#historyUserChat').removeClass('hidden');
 	var divId = 'divChat' + id;
     checkDivChat(divId);
     $('div[id^=\'divChat\']').addClass('hidden');
@@ -241,4 +245,54 @@ function onMessageReceivedOffline(payload) {
 		checkDivChat(divId);
 		addMessageDiv(divId, message, '', 'time-right', message.idUserFrom);
      });
+}
+
+function showHistoryFind() {
+	$('div[id^=\'divChat\']').addClass('hidden');
+	$('#messagesHistoryUser').removeClass('hidden');
+}
+
+function closeHistoryFind() {
+	hiddenHistoryFind();
+	var name = $('#userNameChat').html();
+	var email = $('#userEmailChat').val();
+	var id = $('#userIdChat').val();
+	selectUserChat(id, name, email);
+}
+
+function hiddenHistoryFind() {
+	$('#messagesHistoryUser').addClass('hidden');
+	$('#messagesHistoryUserContact').html('');
+	$('#dateHistoryStart').val('');
+	$('#dateHistoryEnd').val('');
+}
+
+function loadHistoryMessages() {
+	var start = $('#dateHistoryStart').val();
+	var end = $('#dateHistoryEnd').val();
+	if(start && end) {
+		var userEmailFrom = $('#userEmailLogged').val();
+		var userEmailTo = $('#userEmailChat').val();
+		$.post('/messages/history', {
+			userEmailFrom: userEmailFrom,
+			userEmailTo: userEmailTo,
+			start: start,
+			end: end
+		}).done(function(data) {
+			console.log(data);
+			data.forEach(message => {
+				var cssTime = 'time-right';
+				var cssMessage = '';
+				if(message.userEmailFrom !== userEmailFrom) {
+					cssTime = 'time-left';
+					cssMessage = 'darker-right';
+				}
+				addMessageDiv('messagesHistoryUserContact', message, cssMessage, cssTime, message.idUserFrom);
+		     });
+		}).fail(function(data) {
+			alert('Erro ao buscar o histórico.');
+		});		
+	} else {
+		alert('Obrigatório informar período!');
+	}
 }

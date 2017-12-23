@@ -226,6 +226,31 @@ body {
 	font-weight: bold;
 }
 
+.messages-history {
+	width: 450px;
+	height: 500px;
+	overflow-y: scroll;	
+}
+
+.messages-history-header {
+	border: 2px solid #dedede;
+	padding: 5px 10px;
+	min-height: 45px;
+}
+
+.messages-history-header-left{
+	float: left;
+}
+
+.messages-history-header-left input {
+	width: 100px;
+}
+
+.messages-history-header-right {
+	float: right;
+	padding: 5px 0;
+}
+
 .fake-link {
     text-decoration: none;
     cursor: pointer;

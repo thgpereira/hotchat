@@ -11,6 +11,7 @@
  		<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
  		<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
  		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.js"></script>
+ 		<script src="/js/jquery.mask.min.js"></script>
 		<script src="/js/hotchat.js"></script>
 	</head>
 	
@@ -41,13 +42,27 @@
 					<input type="text" name="userChatEmail" id="userEmailChat" class="hidden" />
 					<input type="text" name="userChatEmail" id="userIdChat" class="hidden" />
 					<div class="contact-message-actions">
-						<span class="glyphicon glyphicon-ban-circle fake-link" title="Bloquer este contato." ></span>
-						<span class="glyphicon glyphicon-ok-circle fake-link hidden" title="Contato bloqueado. Clique para desbloquear este contato."></span>
-						<span class="glyphicon glyphicon-time fake-link" title="Visualizar histórico deste contato."></span>
+						<span class="glyphicon glyphicon-time fake-link hidden" id="historyUserChat" title="Visualizar histórico deste contato." onclick="showHistoryFind()"></span>
 						
 					</div>
 				</div>
-				<div class="messages-area" id="areaMessages"></div>
+				<div class="messages-area" id="areaMessages">
+					<div class="messages-history hidden" id="messagesHistoryUser">
+						<div class="messages-history-header">
+							<div class="messages-history-header-left">
+								<span>Período</span>
+								<input type="text" id="dateHistoryStart" />
+								<span> a </span>
+								<input type="text" id="dateHistoryEnd" />
+								<span class="glyphicon glyphicon-search fake-link" title="Pesquisar" onclick="loadHistoryMessages()"></span>
+							</div>
+							<div class="messages-history-header-right">
+								<span class="glyphicon glyphicon-remove fake-link" title="Fechar histórico" onclick="closeHistoryFind()"></span>
+							</div>						
+						</div>
+						<div id="messagesHistoryUserContact"></div>
+					</div>
+				</div>
 			</div>
 		</div>
 		
