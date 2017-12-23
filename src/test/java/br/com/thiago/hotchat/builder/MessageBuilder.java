@@ -40,6 +40,11 @@ public class MessageBuilder {
 		return this;
 	}
 
+	public MessageBuilder withDate(Date date) {
+		this.date = date;
+		return this;
+	}
+
 	public MessageBuilder addDateTody() {
 		this.date = new Date();
 		return this;

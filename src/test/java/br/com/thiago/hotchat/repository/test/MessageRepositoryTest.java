@@ -5,7 +5,9 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,7 @@ import br.com.thiago.hotchat.entity.Message;
 import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.enumerator.MessageStatus;
 import br.com.thiago.hotchat.repository.MessageRepository;
+import br.com.thiago.hotchat.util.DateUtils;
 
 @SpringBootTest
 @DataJpaTest
@@ -70,9 +73,28 @@ public class MessageRepositoryTest {
 		assertThat(messagesPendent, hasSize(0));
 	}
 
+	@Test
+	public void findMessagesByHistorySuccess() throws ParseException {
+		User userFrom = entityManager.persist(new UserBuilder().build());
+		User userTo = entityManager.persist(new UserBuilder().withEmail("unitteste2@email.com.br").build());
+		Date start = DateUtils.formatFirstDateDay("01-01-2017");
+		Date end = DateUtils.formatLastDateDay("01-01-2017");
+		createMessage(MessageStatus.READ, userFrom, userTo, DateUtils.formatDate("01-01-2017 00:00:00"));
+		createMessage(MessageStatus.READ, userFrom, userTo, DateUtils.formatDate("02-01-2017 01:23:23"));
+		createMessage(MessageStatus.READ, userTo, userFrom, DateUtils.formatDate("01-01-2017 23:59:59"));
+		createMessage(MessageStatus.READ, userFrom, userTo, DateUtils.formatDate("01-01-2017 23:59:59"));
+		List<Message> messagesHistory = repository.findByUserFromAndUserToAndDateBetweenOrderByDateAsc(userFrom, userTo,
+				start, end);
+		assertThat(messagesHistory, hasSize(2));
+	}
+
 	private Message createMessage(MessageStatus messageStatus, User userFrom, User userTo) {
+		return createMessage(messageStatus, userFrom, userTo, new Date());
+	}
+
+	private Message createMessage(MessageStatus messageStatus, User userFrom, User userTo, Date date) {
 		Message message = new MessageBuilder().withStatus(messageStatus).withUserFrom(userFrom).withUserTo(userTo)
-				.addDateTody().build();
+				.withDate(date).build();
 		return entityManager.persist(message);
 	}
 

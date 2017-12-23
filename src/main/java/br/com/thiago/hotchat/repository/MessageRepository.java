@@ -1,5 +1,6 @@
 package br.com.thiago.hotchat.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +19,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE Message m SET m.messageStatus = :status WHERE m.id IN (:ids)")
 	void updateMessagesRead(@Param("status") MessageStatus status, @Param("ids") List<Long> ids);
+
+	List<Message> findByUserFromAndUserToAndDateBetweenOrderByDateAsc(User userFrom, User userTo, Date start, Date end);
 
 }
