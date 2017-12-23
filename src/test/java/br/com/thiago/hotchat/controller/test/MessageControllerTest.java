@@ -53,7 +53,7 @@ public class MessageControllerTest {
 	public void findHistoryReturnSucess() throws Exception {
 		when(messageService.findMessagesHistory(Mockito.anyObject())).thenReturn(new ArrayList<MessageDTO>());
 		mvc.perform(post("/messages/history").param("userEmailFrom", "unitteste@email.com.br")
-				.param("userEmailTo", "unitteste@email.com.br").param("start", "01-01-2017").param("end", "01-01-2017")
+				.param("userEmailTo", "unitteste@email.com.br").param("start", "01/01/2017").param("end", "01/01/2017")
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)).andExpect(status().isOk());
 	}
 
