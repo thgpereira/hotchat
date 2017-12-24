@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.thiago.hotchat.builder.MessageBuilder;
 import br.com.thiago.hotchat.builder.UserBuilder;
+import br.com.thiago.hotchat.dto.MessageDTO;
 import br.com.thiago.hotchat.entity.Message;
 import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.enumerator.MessageStatus;
@@ -85,8 +86,8 @@ public class MessageRepositoryTest {
 		createMessage(MessageStatus.READ, userTo, userFrom, DateUtils.formatDate("01/01/2017 23:59:59"));
 		createMessage(MessageStatus.READ, userFrom, userTo, DateUtils.formatDate("01/01/2017 23:59:59"));
 		createMessage(MessageStatus.READ, userFrom, userToNo, DateUtils.formatDate("01/01/2017 13:39:57"));
-		List<Message> messagesHistory = repository.findByUserFromAndUserToAndDateBetween(userFrom, userTo,
-				start, end);
+		List<MessageDTO> messagesHistory = repository.findByUserFromAndUserToAndDateBetween(userFrom, userTo, start,
+				end);
 		assertThat(messagesHistory, hasSize(3));
 	}
 

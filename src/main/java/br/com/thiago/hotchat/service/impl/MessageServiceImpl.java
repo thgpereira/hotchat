@@ -47,9 +47,8 @@ public class MessageServiceImpl implements MessageService {
 	public List<MessageDTO> findMessagesHistory(MessageHistoryDTO messageHistoryDTO) {
 		User userFrom = userRepository.findByEmail(messageHistoryDTO.getUserEmailFrom());
 		User userTo = userRepository.findByEmail(messageHistoryDTO.getUserEmailTo());
-		List<Message> messages = messageRepository.findByUserFromAndUserToAndDateBetween(userFrom, userTo,
+		return messageRepository.findByUserFromAndUserToAndDateBetween(userFrom, userTo,
 				messageHistoryDTO.getDateStart(), messageHistoryDTO.getDateEnd());
-		return convertListMessageToListDTO(messages);
 	}
 
 	private List<MessageDTO> convertListMessageToListDTO(List<Message> messages) {
