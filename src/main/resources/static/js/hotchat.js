@@ -135,7 +135,7 @@ function selectUserChat(id, name, email) {
 	$('#btnSendMessage').removeAttr('disabled');
 	$('#inputMessage').removeAttr('disabled');
 	$('#btnSendMessage').prop('title', 'Enviar mensagem');
-	$('#historyUserChat').removeClass('hidden');
+	$('#contactActionBar').removeClass('hidden');
 	var divId = 'divChat' + id;
     checkDivChat(divId);
     $('div[id^=\'divChat\']').addClass('hidden');
@@ -159,6 +159,7 @@ function onConnected() {
     stompClient.subscribe('/channel/user/' + userEmailLogged, onMessageReceived);
     stompClient.subscribe('/channel/listContacts', onListContactsReceived);
     stompClient.subscribe('/channel/messagesOffline/' + userEmailLogged, onMessageReceivedOffline);
+    stompClient.subscribe('/channel/userBlock/' + userEmailLogged, onBlockUser);
     stompClient.send('/app/chat.addUser', {}, JSON.stringify({userEmailFrom: userEmailLogged}))
 }
 
@@ -295,4 +296,24 @@ function loadHistoryMessages() {
 	} else {
 		alert('Obrigatório informar período!');
 	}
+}
+
+function sendBlockUser(block) {
+    var userEmailFrom = $('#userEmailLogged').val();
+    var userEmailTo = $('#userEmailChat').val();
+    if(stompClient) {
+        var userBlock = {
+        	userFrom: { email: userEmailFrom },
+        	userTo: {email: userEmailTo },
+        	block: block
+        };
+        stompClient.send('/app/chat.blockContact', {}, JSON.stringify(userBlock));
+    }
+}
+
+function onBlockUser(payload) {
+	var message = payload.body;
+	if(message) {
+		alert(message);
+	}	
 }

@@ -25,7 +25,7 @@
 			</div>
 			<div class="chat-bar-actions-right">
 				<a href="/logout" title="Sair">
-					Sair <span class="glyphicon glyphicon-log-out"></span>
+					Sair <span class="glyphicon glyphicon-log-out fake-link"></span>
 				</a>
 			</div>
 		</div>
@@ -41,8 +41,10 @@
 					<div class="contact-message-name" id="userNameChat">Selecione um usuário na lista</div>
 					<input type="text" name="userChatEmail" id="userEmailChat" class="hidden" />
 					<input type="text" name="userChatEmail" id="userIdChat" class="hidden" />
-					<div class="contact-message-actions">
-						<span class="glyphicon glyphicon-time fake-link hidden" id="historyUserChat" title="Visualizar histórico deste contato." onclick="showHistoryFind()"></span>
+					<div class="contact-message-actions hidden" id="contactActionBar">
+						<span class="glyphicon glyphicon-ban-circle fake-link" title="Bloquear contato" onclick="sendBlockUser(true)"></span>
+						<span class="glyphicon glyphicon-ok-circle fake-link" title="Desbloquear contato" onclick="sendBlockUser(false)"></span>
+						<span class="glyphicon glyphicon-time fake-link" title="Visualizar histórico deste contato." onclick="showHistoryFind()"></span>
 						
 					</div>
 				</div>
