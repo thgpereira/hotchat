@@ -141,7 +141,8 @@ function selectUserChat(id, name, email) {
     $('div[id^=\'divChat\']').addClass('hidden');
     $('#' + divId).removeClass('hidden');
     var spanId = "spanChatName" + id;
-	$('#' + spanId).removeClass('chat-receive-message-contact');	
+	$('#' + spanId).removeClass('chat-receive-message-contact');
+	checkBlocked();
 }
 
 var stompClient = null;
@@ -160,6 +161,7 @@ function onConnected() {
     stompClient.subscribe('/channel/listContacts', onListContactsReceived);
     stompClient.subscribe('/channel/messagesOffline/' + userEmailLogged, onMessageReceivedOffline);
     stompClient.subscribe('/channel/userBlock/' + userEmailLogged, onBlockUser);
+    stompClient.subscribe('/channel/checkUserBlock/' + userEmailLogged, onCheckBlockUser);
     stompClient.send('/app/chat.addUser', {}, JSON.stringify({userEmailFrom: userEmailLogged}))
 }
 
@@ -312,8 +314,50 @@ function sendBlockUser(block) {
 }
 
 function onBlockUser(payload) {
-	var message = payload.body;
-	if(message) {
-		alert(message);
-	}	
+	var userBlocked = JSON.parse(payload.body);
+	controlIconsUserBlock(userBlocked.userBlocked)
+	alert(userBlocked.message);
+}
+
+function checkBlocked() {
+    var userEmailFrom = $('#userEmailLogged').val();
+    var userEmailTo = $('#userEmailChat').val();
+    if(stompClient) {
+        var userBlock = {
+        	userFrom: { email: userEmailFrom },
+        	userTo: {email: userEmailTo }
+        };
+        stompClient.send('/app/chat.checkBlockContact', {}, JSON.stringify(userBlock));
+    }
+}
+
+function onCheckBlockUser(payload) {
+	var userBlocked = JSON.parse(payload.body);
+	controlIconsUserBlock(userBlocked.userBlocked)
+}
+
+function controlIconsUserBlock(userBlocked) {
+	if(userBlocked) {
+		$('#blockUserChat').addClass('hidden');
+		$('#unlockUserChat').removeClass('hidden');
+		$('#btnSendMessage').attr('disabled', 'disabled');
+		$('#inputMessage').attr('disabled', 'disabled');
+		$('div[id^=\'divChat\']').addClass('hidden');
+		createDivMessageBlocked();
+	} else {
+		$('#blockUserChat').removeClass('hidden');
+		$('#unlockUserChat').addClass('hidden');
+		$('#btnSendMessage').removeAttr('disabled');
+		$('#inputMessage').removeAttr('disabled');
+		$('#divMessageBlocked').addClass('hidden');
+	}
+}
+
+function createDivMessageBlocked() {
+	if ($('#divMessageBlocked').length == 0) {
+		var divChat = '<div id="divMessageBlocked">Usuário bloqueado. Você não vai receber as mensagens enviadas por ele e nem vai poder enviar mensagens.</div>'
+		$('#areaMessages').append(divChat);
+	}
+	$('#divMessageBlocked').removeClass('hidden');
+	
 }

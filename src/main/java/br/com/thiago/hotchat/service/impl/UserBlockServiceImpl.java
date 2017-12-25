@@ -3,6 +3,7 @@ package br.com.thiago.hotchat.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.thiago.hotchat.entity.User;
 import br.com.thiago.hotchat.entity.UserBlock;
 import br.com.thiago.hotchat.exception.HotChatException;
 import br.com.thiago.hotchat.repository.UserBlockRepository;
@@ -31,6 +32,11 @@ public class UserBlockServiceImpl implements UserBlockService {
 		} else {
 			throw new HotChatException(Messages.userBlockBlocedError());
 		}
+	}
+
+	@Override
+	public UserBlock findUserBlock(User userFrom, User userTo) {
+		return userBlockRepository.findByUserFromAndUserTo(userFrom, userTo);
 	}
 
 	private boolean checkUserToBlock(UserBlock userBlocked) throws HotChatException {

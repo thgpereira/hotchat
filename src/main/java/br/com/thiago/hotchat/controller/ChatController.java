@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 
 import br.com.thiago.hotchat.dto.MessageDTO;
+import br.com.thiago.hotchat.dto.UserBlockDTO;
 import br.com.thiago.hotchat.dto.UserDTO;
 import br.com.thiago.hotchat.entity.Message;
 import br.com.thiago.hotchat.entity.User;
@@ -49,18 +50,18 @@ public class ChatController {
 	public void sendMessage(@Payload Message message) {
 		User userTo = userService.findByEmail(message.getUserEmailTo());
 		User userFrom = userService.findByEmail(message.getUserEmailFrom());
-		if (userTo.isOnline()) {
-			message.setMessageStatus(MessageStatus.READ);
-		} else {
-			message.setMessageStatus(MessageStatus.PENDENT);
+		boolean userBlocked = userBlocked(userFrom, userTo) || userBlocked(userTo, userFrom);
+		if (!userBlocked) {
+			MessageStatus status = userTo.isOnline() ? MessageStatus.READ : MessageStatus.PENDENT;
+			message.setMessageStatus(status);
+			message.setUserFrom(userFrom);
+			message.setUserTo(userTo);
+			messageService.save(message);
+			MessageDTO messageDTO = new MessageDTO();
+			BeanUtils.copyProperties(message, messageDTO);
+			messageDTO.setIdUserFrom(userFrom.getId());
+			simpMessagingTemplate.convertAndSend(Url.CHANNEL_MESSAGE_USER + message.getUserEmailTo(), messageDTO);
 		}
-		message.setUserFrom(userFrom);
-		message.setUserTo(userTo);
-		messageService.save(message);
-		MessageDTO messageDTO = new MessageDTO();
-		BeanUtils.copyProperties(message, messageDTO);
-		messageDTO.setIdUserFrom(userFrom.getId());
-		simpMessagingTemplate.convertAndSend(Url.CHANNEL_MESSAGE_USER + message.getUserEmailTo(), messageDTO);
 	}
 
 	@MessageMapping(Url.ADD_USER)
@@ -90,11 +91,22 @@ public class ChatController {
 			userBlock.setUserTo(userTo);
 			userBlockService.controlUserBlock(userBlock);
 			simpMessagingTemplate.convertAndSend(Url.CHANNEL_BLOCK_USER + userFrom.getEmail(),
-					Messages.processSuccess());
+					new UserBlockDTO(userBlock.isBlock(), Messages.processSuccess()));
 			updateListContacts();
 		} catch (HotChatException e) {
-			simpMessagingTemplate.convertAndSend(Url.CHANNEL_BLOCK_USER + userFrom.getEmail(), e.getMessage());
+			simpMessagingTemplate.convertAndSend(Url.CHANNEL_BLOCK_USER + userFrom.getEmail(),
+					new UserBlockDTO(null, e.getMessage()));
 		}
+	}
+
+	@MessageMapping(Url.CHAT_CHECK_BLOCK_CONTACT)
+	@SendTo(Url.CHANNEL_CHECK_BLOCK_USER_PARAM)
+	public void checkUserBlock(@Payload UserBlock userBlock) {
+		User userTo = userService.findByEmail(userBlock.getUserTo().getEmail());
+		User userFrom = userService.findByEmail(userBlock.getUserFrom().getEmail());
+		boolean userBlocked = userBlocked(userFrom, userTo);
+		simpMessagingTemplate.convertAndSend(Url.CHANNEL_CHECK_BLOCK_USER + userFrom.getEmail(),
+				new UserBlockDTO(userBlocked, null));
 	}
 
 	private void getMessagesOffline(String emailUser) {
@@ -109,6 +121,11 @@ public class ChatController {
 	private void updateMessagesToRead(List<MessageDTO> messagesDTO) {
 		List<Long> ids = messagesDTO.stream().map(MessageDTO::getId).collect(Collectors.toList());
 		messageService.updateMessagesPendentToRead(ids);
+	}
+
+	private boolean userBlocked(User userFrom, User userTo) {
+		UserBlock userBlockSave = userBlockService.findUserBlock(userFrom, userTo);
+		return userBlockSave != null;
 	}
 
 }

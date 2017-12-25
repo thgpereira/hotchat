@@ -8,10 +8,13 @@ public class Url {
 	public final static String CHANNEL_MESSAGES_OFFLINE = "/channel/messagesOffline/";
 	public final static String CHANNEL_BLOCK_USER = "/channel/userBlock/";
 	public final static String CHANNEL_BLOCK_USER_PARAM = "/channel/userBlock/{email}";
+	public final static String CHANNEL_CHECK_BLOCK_USER = "/channel/checkUserBlock/";
+	public final static String CHANNEL_CHECK_BLOCK_USER_PARAM = "/channel/checkUserBlock/{email}";
 
 	public final static String ADD_USER = "/chat.addUser";
 	public final static String CHAT_CONTACTS_LIST = "/chat.listContacts";
 	public final static String CHAT_BLOCK_CONTACT = "/chat.blockContact";
+	public final static String CHAT_CHECK_BLOCK_CONTACT = "/chat.checkBlockContact";
 	public final static String SEND_MESSAGE = "/chat.sendMessage";
 
 }

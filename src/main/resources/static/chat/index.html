@@ -42,8 +42,8 @@
 					<input type="text" name="userChatEmail" id="userEmailChat" class="hidden" />
 					<input type="text" name="userChatEmail" id="userIdChat" class="hidden" />
 					<div class="contact-message-actions hidden" id="contactActionBar">
-						<span class="glyphicon glyphicon-ban-circle fake-link" title="Bloquear contato" onclick="sendBlockUser(true)"></span>
-						<span class="glyphicon glyphicon-ok-circle fake-link" title="Desbloquear contato" onclick="sendBlockUser(false)"></span>
+						<span class="glyphicon glyphicon-ban-circle fake-link" id="blockUserChat" title="Bloquear contato" onclick="sendBlockUser(true)"></span>
+						<span class="glyphicon glyphicon-ok-circle fake-link hidden" id="unlockUserChat" title="Desbloquear contato" onclick="sendBlockUser(false)"></span>
 						<span class="glyphicon glyphicon-time fake-link" title="Visualizar histórico deste contato." onclick="showHistoryFind()"></span>
 						
 					</div>
