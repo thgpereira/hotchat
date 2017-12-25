@@ -21,8 +21,20 @@ src/main/resources/application.properties
 
 Criar o banco de dados **hotchat** (create database hotchat). As tabelas do banco serão criadas automaticamente ao iniciar a aplicação.
 
+Não há necessidade de configuração de banco de dados para os testes unintários.
+
 **Executar a aplicação**
 
 Na pasta do projeto, executar o seguinte comando
 
 mvn spring-boot:run
+
+**URLs**
+
+Acesso a aplicação:
+
+http://localhost:8080/
+
+Acesso ao swagger (necessário estar logado)
+
+http://localhost:8080/swagger-ui.html
